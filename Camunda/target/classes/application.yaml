@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Camunda
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  profiles:
+    active: default
+
+  cloud:
+    config:
+      import-check:
+        enabled: false
+
+  application:
+    name: Camunda
+
+
+
+eureka:
+  client:
+     serviceUrl:
+      defaultZone: http://localhost:8090/eureka/
+
+#logging:
+#  level:
+#    gor.springframework.boot.autoconfigure: DEBUG
+#    org.springframework: DEBUG
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+
+camunda:
+  bpm:
+    webapp:
+      process-engine-name: default
+      history-level: full
+server:
+  port: 8094
+
+
+camunda.bpm.admin-user:
+  id: demo
+  password: demo
+
+

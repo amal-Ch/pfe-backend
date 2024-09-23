@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0qxdigk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="DemandeAutorisation" name="DemandeD&#39;autorisation" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_14dy0jg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1s67trh">
+      <bpmn:incoming>Flow_04x3xta</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_14dy0jg" sourceRef="StartEvent_1" targetRef="Activity_1sss45v" />
+    <bpmn:sequenceFlow id="Flow_04x3xta" sourceRef="Activity_1sss45v" targetRef="Event_1s67trh" />
+    <bpmn:userTask id="Activity_1sss45v" name="demande autorisation">
+      <bpmn:incoming>Flow_14dy0jg</bpmn:incoming>
+      <bpmn:outgoing>Flow_04x3xta</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DemandeAutorisation">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s67trh_di" bpmnElement="Event_1s67trh">
+        <dc:Bounds x="472" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i65bzl_di" bpmnElement="Activity_1sss45v">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_14dy0jg_di" bpmnElement="Flow_14dy0jg">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04x3xta_di" bpmnElement="Flow_04x3xta">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="421" y="117" />
+        <di:waypoint x="421" y="110" />
+        <di:waypoint x="472" y="110" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

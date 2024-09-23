@@ -1,0 +1,7 @@
+com\example\workflow\services\ProcessDeployer.class
+com\example\workflow\services\ProcessService.class
+com\example\workflow\services\SayByeDelegate.class
+com\example\workflow\DTO\TaskDto.class
+com\example\workflow\Controller\ProcessController.class
+com\example\workflow\Application.class
+com\example\workflow\services\SayHelloDelegate.class

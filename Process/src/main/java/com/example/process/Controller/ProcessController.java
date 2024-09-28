@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/processes")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ProcessController {
 
     @Autowired

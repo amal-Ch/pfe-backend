@@ -76,6 +76,15 @@ public class ServiceImp implements IServices {
         WorkflowProcess process = processRepository.findById(id).orElseThrow(() -> new RuntimeException("Process not found"));
         processRepository.delete(process);
 
+
+    }
+    public Page<WorkflowDto> getAllPageWorkflow(Pageable pageable) {
+        Page<WorkflowProcess> workflowProcessPage = processRepository.findAll(pageable);
+        return workflowProcessPage.map(WorkflowDto::toDTO);
+    }
+    public Page<WorkflowDto> searchWorkflows(String query, Pageable pageable) {
+        Page<WorkflowProcess> workflowProcessPage = processRepository.searchByTitle(query, pageable);
+        return workflowProcessPage.map(WorkflowDto::toDTO);
     }
     ///////////////////REQUESTES///////////////////////
 
@@ -159,10 +168,14 @@ public class ServiceImp implements IServices {
         return request;
     }
 
-    public Page<WorkflowDto> getAllPage(Pageable pageable) {
-        Page<WorkflowProcess> workflowProcessPage = processRepository.findAll(pageable);
-        return workflowProcessPage.map(WorkflowDto::toDTO);
+    public Page<RequestDTO> getAllPageRequest(Pageable pageable) {
+        Page<Request> RequestPage = requestRepository.findAll(pageable);
+        return RequestPage.map(RequestDTO::toDTO);
+    }
 
+    public Page<RequestDTO> searchRequests(String query, Pageable pageable) {
+        Page<Request> requestPage = requestRepository.searchByFullName(query, pageable);
+        return requestPage.map(RequestDTO::toDTO);
     }
 
     public void deleteRequest(Integer id) {

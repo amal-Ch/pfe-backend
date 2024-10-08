@@ -25,5 +25,10 @@ public interface IServices {
     Request saveRequest(Request request);
     RequestDTO updateRequest(Integer id, RequestDTO requestDTO);
      void deleteRequest(Integer id);
-    Page<WorkflowDto> getAllPage(Pageable pageable);
+    Page<WorkflowDto> getAllPageWorkflow(Pageable pageable);
+    Page<RequestDTO> getAllPageRequest(Pageable pageable);
+    Page<RequestDTO> searchRequests(String query,Pageable pageable);
+    Page<WorkflowDto> searchWorkflows(String query,Pageable pageable);
+
+
 }

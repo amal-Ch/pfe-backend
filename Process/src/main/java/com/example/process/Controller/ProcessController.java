@@ -88,7 +88,17 @@ public ResponseEntity<Page<WorkflowDto>> getAllWorkflowPaged(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size) {
     Pageable pageable = PageRequest.of(page, size);
-    Page<WorkflowDto> workflowDtos = processService.getAllPage(pageable);
+    Page<WorkflowDto> workflowDtos = processService.getAllPageWorkflow(pageable);
     return ResponseEntity.ok(workflowDtos);
 }
+    @GetMapping("/search")
+    public ResponseEntity<Page<WorkflowDto>> searchWorkflows(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<WorkflowDto> workflowDtos = processService.searchWorkflows(query, pageable);
+        return ResponseEntity.ok(workflowDtos);
+    }
+
 }

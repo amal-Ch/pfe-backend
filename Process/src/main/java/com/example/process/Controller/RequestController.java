@@ -2,6 +2,7 @@ package com.example.process.Controller;
 
 import com.example.process.DTO.RequestDTO;
 import com.example.process.DTO.TaskDTO;
+import com.example.process.DTO.WorkflowDto;
 import com.example.process.entity.Request;
 import com.example.process.entity.WorkflowProcess;
 import com.example.process.exception.ResourceNotFoundException;
@@ -11,6 +12,9 @@ import com.example.process.service.CamundaService;
 import com.example.process.service.IServices;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -111,4 +115,24 @@ public ResponseEntity<Map<String, String>> completeTaskByProcessInstanceId(
     public void deleteRequest(@PathVariable Integer id) {
         requestService.deleteRequest(id);
     }
+
+    @GetMapping
+    public ResponseEntity<Page<RequestDTO>> getAllPageRequest(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RequestDTO> requestDtos = requestService.getAllPageRequest(pageable);
+        return ResponseEntity.ok(requestDtos);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<RequestDTO>> searchRequests(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RequestDTO> requestDtos = requestService.searchRequests(query, pageable);
+        return ResponseEntity.ok(requestDtos);
+    }
+
 }

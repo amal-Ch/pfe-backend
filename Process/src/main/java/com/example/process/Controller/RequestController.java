@@ -2,22 +2,16 @@ package com.example.process.Controller;
 
 import com.example.process.DTO.RequestDTO;
 import com.example.process.DTO.TaskDTO;
-import com.example.process.DTO.WorkflowDto;
-import com.example.process.entity.Request;
-import com.example.process.entity.WorkflowProcess;
 import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
-import com.example.process.repository.RequestRepository;
-import com.example.process.service.CamundaService;
-import com.example.process.service.IServices;
-import org.camunda.bpm.engine.rest.dto.task.TaskDto;
+import com.example.process.service.requestService.CamundaService;
+import com.example.process.service.requestService.IServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/requests")
 public class RequestController {
 
     @Autowired
-    private IServices requestService;
+    private IServiceRequest requestService;
 
     @Autowired
     private ProcessRepository processRepository;
@@ -127,11 +120,11 @@ public ResponseEntity<Map<String, String>> completeTaskByProcessInstanceId(
 
     @GetMapping("/search")
     public ResponseEntity<Page<RequestDTO>> searchRequests(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value = "search",required = false) String search,
+            @RequestParam(value = "page",defaultValue = "0") int page,
+            @RequestParam(value = "size",defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<RequestDTO> requestDtos = requestService.searchRequests(query, pageable);
+        Page<RequestDTO> requestDtos = requestService.searchRequests(search, pageable);
         return ResponseEntity.ok(requestDtos);
     }
 

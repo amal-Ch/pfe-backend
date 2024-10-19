@@ -2,8 +2,8 @@ package com.example.process.Controller;
 
 import com.example.process.DTO.WorkflowDto;
 import com.example.process.entity.WorkflowProcess;
-import com.example.process.service.CamundaService;
-import com.example.process.service.IServices;
+import com.example.process.service.requestService.CamundaService;
+import com.example.process.service.workflowService.IServiceWorkflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ProcessController {
 
     @Autowired
-    private IServices processService;
+    private IServiceWorkflow processService;
 
     @Autowired
     private CamundaService camundaService;
@@ -93,11 +93,11 @@ public ResponseEntity<Page<WorkflowDto>> getAllWorkflowPaged(
 }
     @GetMapping("/search")
     public ResponseEntity<Page<WorkflowDto>> searchWorkflows(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam (value = "search",required = false) String search,
+            @RequestParam(value = "page",defaultValue = "0") int page,
+            @RequestParam(value = "size",defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<WorkflowDto> workflowDtos = processService.searchWorkflows(query, pageable);
+        Page<WorkflowDto> workflowDtos = processService.searchWorkflows(search, pageable);
         return ResponseEntity.ok(workflowDtos);
     }
 

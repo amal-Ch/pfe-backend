@@ -16,7 +16,7 @@
       <module name="Administration" target="17" />
       <module name="Camunda" target="1.8" />
       <module name="Eureka" target="17" />
-      <module name="Process" target="1.8" />
+      <module name="Process" target="9" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

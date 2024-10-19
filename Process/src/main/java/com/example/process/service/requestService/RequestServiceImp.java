@@ -1,7 +1,8 @@
-package com.example.process.service;
+package com.example.process.service.requestService;
 
 import com.example.process.DTO.RequestDTO;
-import com.example.process.DTO.WorkflowDto;
+import com.example.process.email.Service.impl.EmailServiceImpl;
+import com.example.process.email.Service.impl.PdfGeneratorService;
 import com.example.process.entity.Request;
 import com.example.process.entity.WorkflowProcess;
 import com.example.process.exception.ResourceNotFoundException;
@@ -14,13 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ServiceImp implements IServices {
+public class RequestServiceImp implements IServiceRequest {
     @Autowired
     private ProcessRepository processRepository;
 
@@ -28,65 +30,15 @@ public class ServiceImp implements IServices {
     private RequestRepository requestRepository;
     @Autowired
     private CamundaService camundaService;
-    @Autowired
-    private BpmnFileService bpmnFileService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceImp.class);
+    @Autowired
+    private PdfGeneratorService pdfGeneratorService;
+    @Autowired
+    private EmailServiceImpl emailService;
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestServiceImp.class);
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-
-    ///////////////////PROCESSES///////////////////////
-    @Override
-    public List<WorkflowProcess> getAllProcesses() {
-        return processRepository.findAll();
-    }
-
-    @Override
-    public Optional<WorkflowProcess> getProcessById(Integer id) {
-        return processRepository.findById(id);
-    }
-
-    @Override
-    public WorkflowProcess createProcess(WorkflowProcess process) {
-        String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
-        if (bpmnContent == null) {
-            throw new RuntimeException("BPMN file not found");
-        }
-        return processRepository.save(process);
-    }
-
-    @Override
-    public WorkflowProcess updateProcess(Integer id, WorkflowProcess processDetails) {
-        WorkflowProcess process = processRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Process not found"));
-
-        process.setCode(processDetails.getCode());
-        process.setTitle(processDetails.getTitle());
-        process.setProcessKey(processDetails.getProcessKey());
-        String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
-        if (bpmnContent == null) {
-            throw new RuntimeException("BPMN file not found");
-        }
-
-        return processRepository.save(process);
-    }
-
-    @Override
-    public void deleteProcess(Integer id) {
-        WorkflowProcess process = processRepository.findById(id).orElseThrow(() -> new RuntimeException("Process not found"));
-        processRepository.delete(process);
-
-
-    }
-    public Page<WorkflowDto> getAllPageWorkflow(Pageable pageable) {
-        Page<WorkflowProcess> workflowProcessPage = processRepository.findAll(pageable);
-        return workflowProcessPage.map(WorkflowDto::toDTO);
-    }
-    public Page<WorkflowDto> searchWorkflows(String query, Pageable pageable) {
-        Page<WorkflowProcess> workflowProcessPage = processRepository.searchByTitle(query, pageable);
-        return workflowProcessPage.map(WorkflowDto::toDTO);
-    }
-    ///////////////////REQUESTES///////////////////////
 
 
     public List<RequestDTO> getAllRequests() {
@@ -120,7 +72,10 @@ public class ServiceImp implements IServices {
         // Save the request entity to the database
         Request savedRequest = requestRepository.save(request);
         logger.info("Request saved: {}", savedRequest);
-
+        // Generate PDF of the request data
+        ByteArrayInputStream pdf = pdfGeneratorService.generatePdfForRequest(savedRequest);
+        // Send email with the PDF as an attachment
+        emailService.sendEmailWithAttachment("amalchibani3@outlook.com", "Your PDF", "Please find the attached PDF.", pdf);
         // Convert the saved entity back to DTO and return it
         return convertToDto(savedRequest);
     }
@@ -173,10 +128,11 @@ public class ServiceImp implements IServices {
         return RequestPage.map(RequestDTO::toDTO);
     }
 
-    public Page<RequestDTO> searchRequests(String query, Pageable pageable) {
-        Page<Request> requestPage = requestRepository.searchByFullName(query, pageable);
+    public Page<RequestDTO> searchRequests(String search, Pageable pageable) {
+        Page<Request> requestPage = requestRepository.searchByFullName(search, pageable);
         return requestPage.map(RequestDTO::toDTO);
     }
+
 
     public void deleteRequest(Integer id) {
         requestRepository.deleteById(id);

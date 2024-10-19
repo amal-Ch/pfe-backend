@@ -1,4 +1,4 @@
-package com.example.process.service;
+package com.example.process.service.workflowService;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

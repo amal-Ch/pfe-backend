@@ -4,6 +4,7 @@ import com.example.process.DTO.RequestDTO;
 import com.example.process.email.Service.impl.EmailServiceImpl;
 import com.example.process.email.Service.impl.PdfGeneratorService;
 import com.example.process.entity.Request;
+import com.example.process.entity.RequestStatus;
 import com.example.process.entity.WorkflowProcess;
 import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
@@ -60,6 +61,8 @@ public class RequestServiceImp implements IServiceRequest {
         // Convert DTO to entity and set the workflow process
         Request request = convertToEntity(requestDTO);
         request.setWorkflowProcess(workflowProcessOpt.get());
+        // Set userId from DTO
+        request.setUserId(requestDTO.getUserId());
 
         // Start the process instance using the process key and get the process instance ID
         String processKey = workflowProcessOpt.get().getProcessKey();
@@ -108,9 +111,11 @@ public class RequestServiceImp implements IServiceRequest {
         requestDTO.setIdRequest(request.getIdRequest());
         requestDTO.setFullName(request.getFullName());
         requestDTO.setObject(request.getObject());
+        request.setUserId(requestDTO.getUserId());
         requestDTO.setAddedDateRequest(request.getAddedDateRequest());
         requestDTO.setIdProcess(request.getWorkflowProcess().getIdProcess());
-        requestDTO.setProcessInstanceId(request.getProcessInstanceId()); // Add this line
+        requestDTO.setProcessInstanceId(request.getProcessInstanceId());
+        request.setStatus(RequestStatus.IN_PROGRESS);
         return requestDTO;
     }
 
@@ -118,8 +123,10 @@ public class RequestServiceImp implements IServiceRequest {
         Request request = new Request();
         request.setFullName(requestDTO.getFullName());
         request.setObject(requestDTO.getObject());
+        request.setUserId(requestDTO.getUserId());
         request.setAddedDateRequest(requestDTO.getAddedDateRequest());
-        request.setProcessInstanceId(requestDTO.getProcessInstanceId()); // Add this line
+        request.setProcessInstanceId(requestDTO.getProcessInstanceId());
+        request.setStatus(RequestStatus.IN_PROGRESS);
         return request;
     }
 

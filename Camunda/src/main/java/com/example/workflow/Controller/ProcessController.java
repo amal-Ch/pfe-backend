@@ -7,12 +7,13 @@ import org.camunda.bpm.engine.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class ProcessController {
     private final ProcessService processService;
     @Autowired
     private ProcessDeployer processDeployer;
-
+    private final RestTemplate restTemplate = new RestTemplate();
     private static final Logger logger = LoggerFactory.getLogger(ProcessController.class);
 
     @Autowired
@@ -62,22 +63,11 @@ public class ProcessController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("process-definition/key/{processKey}/start-with-variables")
-//public void startProcessWithVariables(@PathVariable String processKey, @RequestBody StartProcessInstanceDto dto) {
-//    processService.startProcessWithVariables(processKey, dto);
-//}
-
     @GetMapping("/engine-rest/task")
     public ResponseEntity<List<TaskDto>> getTasks(@RequestParam String processInstanceId) {
         List<TaskDto> tasks = processService.getTasks(processInstanceId);
         return ResponseEntity.ok(tasks);
     }
-
-//    @GetMapping("/engine-rest/tasks/{processInstanceId}")
-//    public ResponseEntity<List<TaskDto>> getTasks(@PathVariable String processInstanceId) {
-//        List<TaskDto> tasks = processService.getTasks(processInstanceId);
-//        return ResponseEntity.ok(tasks);
-//    }
 
     @PostMapping("/engine-rest/task/{taskId}/complete")
     public ResponseEntity<Void> completeTask(@PathVariable String taskId, @RequestBody Map<String, Object> inputVariables) {
@@ -95,21 +85,17 @@ public class ProcessController {
         }
     }
 
-
-//    @GetMapping("/engine-rest/variables/{processInstanceId}")
-//    public Map<String, Object> getProcessVariables(@PathVariable String processInstanceId) {
-//        return processService.getProcessVariables(processInstanceId);
-//    }
-//    public Object getTaskVariable(@PathVariable String id, @PathVariable String varName) {
-//        return taskService.getVariable(id, varName);
-//    }
-
-    // Endpoint to set process variables
-//    @PostMapping("/engine-rest/variables/{processInstanceId}")
-//    public void setProcessVariables(@PathVariable String processInstanceId, @RequestBody Map<String, Object> variables) {
-//        processService.setProcessVariables(processInstanceId, variables);
-//    }
-
+    // New endpoint to get form variables for a task
+    @GetMapping("/engine-rest/task/{taskId}/form-variables")
+    public ResponseEntity<Map<String, Object>> getTaskFormVariables(@PathVariable String taskId) {
+        try {
+            Map<String, Object> formVariables = processService.getTaskFormVariables(taskId);
+            return ResponseEntity.ok(formVariables);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Failed to retrieve form variables: " + e.getMessage()));
+        }
+    }
 }
 
 

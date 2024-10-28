@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="" exporter="Camunda Modeler" exporterVersion="4.12.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="sid-C3803939-0872-457F-8336-EAE484DC4A04" name="Customer" processType="None" isClosed="false" isExecutable="false">
+    <extensionElements />
+    <startEvent id="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138" name="Start Event">
+      <outgoing>Flow_1jek9zz</outgoing>
+    </startEvent>
+    <endEvent id="Event_1men384">
+      <incoming>Flow_1rrxzxq</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1jek9zz" sourceRef="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138" targetRef="Activity_0j3cdfz" />
+    <sequenceFlow id="Flow_1rrxzxq" sourceRef="Activity_0j3cdfz" targetRef="Event_1men384" />
+    <userTask id="Activity_0j3cdfz" name="amal">
+      <incoming>Flow_1jek9zz</incoming>
+      <outgoing>Flow_1rrxzxq</outgoing>
+    </userTask>
+  </process>
+  <bpmndi:BPMNDiagram id="sid-74620812-92c4-44e5-949c-aa47393d3830">
+    <bpmndi:BPMNPlane id="sid-cdcae759-2af7-4a6d-bd02-53f3352a731d" bpmnElement="sid-C3803939-0872-457F-8336-EAE484DC4A04">
+      <bpmndi:BPMNShape id="StartEvent_0l6sgn0_di" bpmnElement="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138">
+        <omgdc:Bounds x="187" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="178" y="119" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1men384_di" bpmnElement="Event_1men384">
+        <omgdc:Bounds x="582" y="72" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k5bvwz_di" bpmnElement="Activity_0j3cdfz">
+        <omgdc:Bounds x="360" y="40" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1jek9zz_di" bpmnElement="Flow_1jek9zz">
+        <di:waypoint x="223" y="100" />
+        <di:waypoint x="292" y="100" />
+        <di:waypoint x="292" y="80" />
+        <di:waypoint x="360" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rrxzxq_di" bpmnElement="Flow_1rrxzxq">
+        <di:waypoint x="460" y="80" />
+        <di:waypoint x="521" y="80" />
+        <di:waypoint x="521" y="90" />
+        <di:waypoint x="582" y="90" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

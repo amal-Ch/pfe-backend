@@ -1,10 +1,13 @@
 package com.example.workflow.services;
 
 import com.example.workflow.DTO.TaskDto;
+import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.exception.NullValueException;
+import org.camunda.bpm.engine.form.FormField;
+import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.rest.dto.runtime.StartProcessInstanceDto;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
@@ -28,6 +31,9 @@ public class ProcessService {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private FormService formService;
 
     public void startAndCompleteProcess(String processDefinitionKey) {
         // Start the process instance
@@ -69,22 +75,6 @@ public class ProcessService {
         return processInstance.getId();
     }
 
-    //public void startProcessWithVariables(String processKey, StartProcessInstanceDto dto) {
-//        Map<String, VariableValueDto> variables = dto.getVariables();
-//        runtimeService.startProcessInstanceByKey(processKey, variables.toString());
-//    }
-//        Map<String, VariableValueDto> variables = dto.getVariables();
-//        String variablesJson = "";
-//        try {
-//            variablesJson = objectMapper.writeValueAsString(variables);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            // Handle exception
-//        }
-//        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variablesJson);
-//        return processInstance.getId();
-//    }
-
     public List<TaskDto> getTasks(String processInstanceId) {
         // Adjust the query to ensure only tasks that are currently active and assigned to the process instance are returned.
         List<Task> tasks = taskService.createTaskQuery()
@@ -124,31 +114,26 @@ public class ProcessService {
         }
     }
 
-        // Get process variables
-//        public Object getVariable(String taskId, String variableName) {
-//            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-//            if (task == null) {
-//                throw new RuntimeException("Task not found: " + taskId);
-//            }
-//            return taskService.getVariable(taskId, variableName);
-//        }
-//        public Map<String, Object> getProcessVariables (String processInstanceId){
-//            return runtimeService.getVariables(processInstanceId);
-//        }
+    public Map<String, Object> getTaskFormVariables(String taskId) {
+        try {
+            // Fetch the form data for the given task ID
+            TaskFormData taskFormData = formService.getTaskFormData(taskId);
 
+            // Prepare a map to hold form variables
+            Map<String, Object> formVariables = new HashMap<>();
 
-        // Set process variables
-//        public void setProcessVariables (String processInstanceId, Map < String, Object > variables){
-//            runtimeService.setVariables(processInstanceId, variables);
-//        }
+            // If form data is available, extract form variables
+            if (taskFormData != null) {
+                for (FormField field : taskFormData.getFormFields()) {
+                    formVariables.put(field.getId(), field.getDefaultValue());
+                }
+            }
 
-
-//    public List<Task> getTasksForUser(String id) {
-//        return processEngine.getTaskService().createTaskQuery()
-//                .taskAssignee(id)
-//                .list();
-//    }
-//
+            return formVariables;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get form variables for task: " + e.getMessage(), e);
+        }
+    }
 
 }
 

@@ -9,10 +9,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Service
 public class CamundaService {
@@ -75,10 +73,19 @@ public class CamundaService {
                 restTemplate.postForObject(url, variables, String.class);
             } else {
                 // Send empty request body if no variables
-                restTemplate.postForObject(url, null, String.class);
+                restTemplate.postForObject(url, Collections.emptyMap(), String.class);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to complete task: " + e.getMessage(), e);
+        }
+    }
+    public Map<String, Object> getTaskRequiredVariables(String taskId) {
+        String url = "http://localhost:8094/api/engine-rest/task/" + taskId + "/form-variables";
+        try {
+            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+            return response.getBody();  // This will give you the required variables
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get task required variables: " + e.getMessage(), e);
         }
     }
 

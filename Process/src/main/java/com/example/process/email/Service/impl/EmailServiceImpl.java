@@ -56,7 +56,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    public void sendEmailWithAttachment(String to, String subject, String text, ByteArrayInputStream pdf) {
+    public void sendEmailWithAttachment(String to, String subject, String text, ByteArrayInputStream pdf)throws IOException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
@@ -73,10 +73,6 @@ public class EmailServiceImpl implements EmailService {
             // Envoi du message
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Handle IOException from pdf.readAllBytes()
-            System.err.println("Error reading PDF bytes: " + e.getMessage());
             e.printStackTrace();
         }
     }

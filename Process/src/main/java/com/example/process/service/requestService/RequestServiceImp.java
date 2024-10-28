@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -77,8 +78,13 @@ public class RequestServiceImp implements IServiceRequest {
         logger.info("Request saved: {}", savedRequest);
         // Generate PDF of the request data
         ByteArrayInputStream pdf = pdfGeneratorService.generatePdfForRequest(savedRequest);
+
         // Send email with the PDF as an attachment
-        emailService.sendEmailWithAttachment("amalchibani3@outlook.com", "Your PDF", "Please find the attached PDF.", pdf);
+        try {
+            emailService.sendEmailWithAttachment("amalchibani3@outlook.com", "Your PDF", "Please find the attached PDF.", pdf);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Convert the saved entity back to DTO and return it
         return convertToDto(savedRequest);
     }

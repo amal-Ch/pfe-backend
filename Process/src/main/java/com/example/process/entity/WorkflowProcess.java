@@ -34,12 +34,17 @@ public class WorkflowProcess {
 
     @Column(nullable = false)
     private String ProcessKey;
+    @Column(columnDefinition = "TEXT")
+    private String diagramXML;
     @CreationTimestamp
     @Column(updatable = false, name = "date_added")
     private Date dateAdded;
 
-   /* @OneToMany(mappedBy = "workflowProcess", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Set<Request> requests;
-*/
+    @ManyToMany
+    @JoinTable(
+            name = "workflow_process_status",
+            joinColumns = @JoinColumn(name = "workflow_process_id"),
+            inverseJoinColumns = @JoinColumn(name = "status_id")
+    )
+    private Set<Status> statuses;
 }

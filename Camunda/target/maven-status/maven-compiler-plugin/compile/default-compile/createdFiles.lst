@@ -1,7 +1,13 @@
 com\example\workflow\services\ProcessDeployer.class
 com\example\workflow\services\ProcessService.class
+com\example\workflow\delegates\DelegateController.class
 com\example\workflow\services\SayByeDelegate.class
+com\example\workflow\Controller\listenerController.class
+com\example\workflow\services\BpmnFileserviceCamundaMS.class
 com\example\workflow\DTO\TaskDto.class
 com\example\workflow\Controller\ProcessController.class
-com\example\workflow\Application.class
 com\example\workflow\services\SayHelloDelegate.class
+com\example\workflow\listeners\MyExecutionListener.class
+com\example\workflow\configuration\RestTemplateConfig.class
+com\example\workflow\Application.class
+com\example\workflow\configuration\WebConfig.class

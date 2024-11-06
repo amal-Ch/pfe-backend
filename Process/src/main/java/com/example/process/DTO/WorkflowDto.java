@@ -12,6 +12,7 @@ public class WorkflowDto {
     private String code;
     private String title;
     private String processKey;
+
     private Date dateAdded;
     public static WorkflowDto toDTO(WorkflowProcess entity) {
         WorkflowDto dto = new WorkflowDto();

@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -29,13 +31,20 @@ public class Request {
     private Long userId; // This will store the user ID from the other microservice
 
     // New field for request status
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private RequestStatus status;
+
 
     @ManyToOne
     @JoinColumn(name = "id_process", nullable = false)
     @JsonBackReference
     private WorkflowProcess workflowProcess;
+
     private String processInstanceId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id", nullable = true) // nullable if a Request can exist without a Status
+    private Status status;
+
+    public void updateStatus(Status newStatus) {
+        this.status = newStatus;
+    }
 }

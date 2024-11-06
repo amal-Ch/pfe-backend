@@ -8,6 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +34,32 @@ public class WorkflowServiceImp implements IServiceWorkflow{
 
     @Override
     public WorkflowProcess createProcess(WorkflowProcess process) {
-        String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
-        if (bpmnContent == null) {
-            throw new RuntimeException("BPMN file not found");
+        // Step 1: Save the workflow to the database
+        WorkflowProcess savedProcess = processRepository.save(process);
+
+        // Step 2: Save the diagram XML to resources/WorkFlows using processKey
+        if (process.getDiagramXML() != null && !process.getDiagramXML().isEmpty()) {
+            bpmnFileService.saveBpmnFile(process.getProcessKey(), process.getDiagramXML());
         }
-        return processRepository.save(process);
+
+        // Step 3: Optional - Verify by loading the saved file
+        try {
+            String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
+            if (bpmnContent == null) {
+                throw new RuntimeException("Failed to load the BPMN file after saving.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading saved BPMN file: " + e.getMessage(), e);
+        }
+
+        return savedProcess;
+//        String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
+//        if (bpmnContent == null) {
+//            throw new RuntimeException("BPMN file not found");
+//        }
+       // return processRepository.save(process);
     }
+
 
     @Override
     public WorkflowProcess updateProcess(Integer id, WorkflowProcess processDetails) {

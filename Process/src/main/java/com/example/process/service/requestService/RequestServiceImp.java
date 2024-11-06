@@ -4,11 +4,12 @@ import com.example.process.DTO.RequestDTO;
 import com.example.process.email.Service.impl.EmailServiceImpl;
 import com.example.process.email.Service.impl.PdfGeneratorService;
 import com.example.process.entity.Request;
-import com.example.process.entity.RequestStatus;
+import com.example.process.entity.Status;
 import com.example.process.entity.WorkflowProcess;
 import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
 import com.example.process.repository.RequestRepository;
+import com.example.process.repository.StatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +32,9 @@ public class RequestServiceImp implements IServiceRequest {
 
     @Autowired
     private RequestRepository requestRepository;
+    @Autowired
+    private StatusRepository statusRepository;
+
     @Autowired
     private CamundaService camundaService;
 
@@ -65,6 +70,10 @@ public class RequestServiceImp implements IServiceRequest {
         // Set userId from DTO
         request.setUserId(requestDTO.getUserId());
 
+        Status newStatus = statusRepository.findByTitle("new")
+                .orElseThrow(() -> new ResourceNotFoundException("Status 'New' not found"));
+        request.setStatus(newStatus);
+
         // Start the process instance using the process key and get the process instance ID
         String processKey = workflowProcessOpt.get().getProcessKey();
         logger.info("Starting process with key: {}", processKey);
@@ -72,6 +81,8 @@ public class RequestServiceImp implements IServiceRequest {
 
         // Set the process instance ID in the request entity
         request.setProcessInstanceId(processInstanceId);
+
+
 
         // Save the request entity to the database
         Request savedRequest = requestRepository.save(request);
@@ -89,10 +100,13 @@ public class RequestServiceImp implements IServiceRequest {
         return convertToDto(savedRequest);
     }
 
-    @Override
-    public Request saveRequest(Request request) {
-        return requestRepository.save(request);
-    }
+//    public Request createRequestWithStatus(Request request, Integer statusId) {
+//        Status status = statusRepository.findById(statusId)
+//                .orElseThrow(() -> new RuntimeException("Status not found with id: " + statusId));
+//
+//        request.getStatuses().add(status);  // Add the "New" status to the Request
+//        return requestRepository.save(request);
+//    }
 
     @Override
     public RequestDTO updateRequest(Integer id, RequestDTO requestDTO) {
@@ -112,6 +126,17 @@ public class RequestServiceImp implements IServiceRequest {
         return convertToDto(updatedRequest);
     }
 
+    @Override
+    public void updateStatusByProcessId(String processInstanceId, Integer idStatus) {
+        Request request = requestRepository.findByProcessInstanceId(processInstanceId).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        Status status = statusRepository.findById(idStatus).orElse(null);
+        request.setStatus(status);
+        requestRepository.save(request);
+
+        //requestRepository.updateStatusByProcessInstanceId(status,processInstanceId);
+    }
+
+
     private RequestDTO convertToDto(Request request) {
         RequestDTO requestDTO = new RequestDTO();
         requestDTO.setIdRequest(request.getIdRequest());
@@ -121,7 +146,12 @@ public class RequestServiceImp implements IServiceRequest {
         requestDTO.setAddedDateRequest(request.getAddedDateRequest());
         requestDTO.setIdProcess(request.getWorkflowProcess().getIdProcess());
         requestDTO.setProcessInstanceId(request.getProcessInstanceId());
-        request.setStatus(RequestStatus.IN_PROGRESS);
+        if (request.getStatus() != null) {
+            requestDTO.setStatusId(request.getStatus().getIdStatus());
+        } else {
+            requestDTO.setStatusId(null); // or handle as appropriate
+        }
+
         return requestDTO;
     }
 
@@ -132,7 +162,7 @@ public class RequestServiceImp implements IServiceRequest {
         request.setUserId(requestDTO.getUserId());
         request.setAddedDateRequest(requestDTO.getAddedDateRequest());
         request.setProcessInstanceId(requestDTO.getProcessInstanceId());
-        request.setStatus(RequestStatus.IN_PROGRESS);
+
         return request;
     }
 

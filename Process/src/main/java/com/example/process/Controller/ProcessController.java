@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,22 +39,22 @@ public class ProcessController {
                 .orElseThrow(() -> new RuntimeException("Process not found"));
         return ResponseEntity.ok().body(process);
     }
-//    public ResponseEntity<WorkflowProcess> getProcessById(@PathVariable Integer id) {
-//        Optional<WorkflowProcess> process = processService.getProcessById(id);
-//        if (process.isPresent()) {
-//            return ResponseEntity.ok(process.get());
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
-    @PostMapping("/AddProcess")
-    public ResponseEntity<WorkflowProcess> createProcess(@RequestBody WorkflowProcess process) {
-        WorkflowProcess createdProcess = processService.createProcess(process);
-        return ResponseEntity.ok().body(createdProcess);
+    @PostMapping("/AddProcessWithDiagram")
+    public ResponseEntity<?> addProcessWithDiagram(@RequestBody WorkflowProcess payload) {
+        try {
+            // Save workflow with processKey and diagram XML
+            WorkflowProcess createdWorkflow = processService.createProcess(payload);
+            return ResponseEntity.ok(createdWorkflow);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error saving workflow and diagram: " + e.getMessage());
+        }
     }
-//    public WorkflowProcess createProcess(@RequestBody WorkflowProcess process) {
-//        return processService.createProcess(process);
+
+//    @PostMapping("/AddProcess")
+//    public ResponseEntity<WorkflowProcess> createProcess(@RequestBody WorkflowProcess process) {
+//        WorkflowProcess createdProcess = processService.createProcess(process);
+//        return ResponseEntity.ok().body(createdProcess);
 //    }
 
     @PutMapping("UpdateProcess/{id}")
@@ -61,28 +62,13 @@ public class ProcessController {
         WorkflowProcess updatedProcess = processService.updateProcess(id, processDetails);
         return ResponseEntity.ok().body(updatedProcess);
     }
-//    public ResponseEntity<WorkflowProcess> updateProcess(@PathVariable Integer id, @RequestBody WorkflowProcess processDetails) {
-//        try {
-//            WorkflowProcess updatedProcess = processService.updateProcess(id, processDetails);
-//            return ResponseEntity.ok(updatedProcess);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
     @DeleteMapping("DeleteProcess/{id}")
     public ResponseEntity<Void> deleteProcess(@PathVariable Integer id) {
         processService.deleteProcess(id);
         return ResponseEntity.noContent().build();
     }
-//    public ResponseEntity<Void> deleteProcess(@PathVariable Integer id) {
-//        try {
-//            processService.deleteProcess(id);
-//            return ResponseEntity.noContent().build();
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+
 @GetMapping
 public ResponseEntity<Page<WorkflowDto>> getAllWorkflowPaged(
         @RequestParam(defaultValue = "0") int page,

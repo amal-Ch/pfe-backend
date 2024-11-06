@@ -1,11 +1,10 @@
 package com.example.process.DTO;
 
 import com.example.process.entity.Request;
-import com.example.process.entity.RequestStatus;
-import com.example.process.entity.WorkflowProcess;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Getter
@@ -18,8 +17,8 @@ public class RequestDTO {
     private LocalDateTime addedDateRequest;
     private Integer idProcess;
     private String processInstanceId;
-    private RequestStatus status;
-
+    private Integer statusId; // Existing status ID
+    private String statusTitle;
     public static RequestDTO toDTO(Request entity) {
         RequestDTO dto = new RequestDTO();
         dto.setIdRequest(entity.getIdRequest());
@@ -29,7 +28,9 @@ public class RequestDTO {
         dto.setProcessInstanceId(entity.getProcessInstanceId());
         dto.setAddedDateRequest(entity.getAddedDateRequest());
         dto.setIdProcess(entity.getWorkflowProcess().getIdProcess());
-        dto.setStatus(entity.getStatus());
+        dto.setStatusId(Objects.nonNull(entity.getStatus())?entity.getStatus().getIdStatus():null);
+        dto.setStatusTitle(Objects.nonNull(entity.getStatus())?entity.getStatus().getTitle():null);
+
         return dto;
     }
 }

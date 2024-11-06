@@ -2,6 +2,7 @@ package com.example.process.Controller;
 
 import com.example.process.DTO.RequestDTO;
 import com.example.process.DTO.TaskDTO;
+import com.example.process.entity.Request;
 import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
 import com.example.process.service.requestService.CamundaService;
@@ -79,6 +80,20 @@ public class RequestController {
         }
     }
 
+//    @PostMapping("/AddRequestWithStatus")
+//    public ResponseEntity<Request> createRequest(@RequestBody Map<String, Object> requestData) {
+//        String fullName = (String) requestData.get("fullName");
+//        String object = (String) requestData.get("object");
+//        Integer statusId = (Integer) requestData.get("statusId");
+//
+//        Request newRequest = new Request();
+//        newRequest.setFullName(fullName);
+//        newRequest.setObject(object);
+//
+//        Request createdRequest = requestService.createRequestWithStatus(newRequest, statusId);
+//        return ResponseEntity.ok(createdRequest);
+//    }
+
     @PutMapping("UpdateRequest/{id}")
     public ResponseEntity<RequestDTO> updateRequest(@PathVariable Integer id, @RequestBody RequestDTO requestDTO) {
         try {
@@ -89,6 +104,10 @@ public class RequestController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @PostMapping("UpdateRequestByProcessId/{ProcessInstanceId}/{statusId}")
+    public void updateStatusByProcessId(@PathVariable String ProcessInstanceId, @PathVariable Integer statusId) {
+        requestService.updateStatusByProcessId(ProcessInstanceId,statusId);
     }
 
     @DeleteMapping("DeleteRequest/{id}")

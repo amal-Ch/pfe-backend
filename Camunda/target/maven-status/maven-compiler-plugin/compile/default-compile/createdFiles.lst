@@ -11,3 +11,4 @@ com\example\workflow\listeners\MyExecutionListener.class
 com\example\workflow\configuration\RestTemplateConfig.class
 com\example\workflow\Application.class
 com\example\workflow\configuration\WebConfig.class
+com\example\workflow\DTO\StatusDto.class

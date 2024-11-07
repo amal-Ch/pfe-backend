@@ -1,6 +1,7 @@
 package com.example.process.Controller;
 
 import com.example.process.DTO.RequestDTO;
+import com.example.process.DTO.StatusDto;
 import com.example.process.DTO.TaskDTO;
 import com.example.process.entity.Request;
 import com.example.process.exception.ResourceNotFoundException;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,9 +105,11 @@ public class RequestController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping("UpdateRequestByProcessId/{ProcessInstanceId}/{statusId}")
-    public void updateStatusByProcessId(@PathVariable String ProcessInstanceId, @PathVariable Integer statusId) {
-        requestService.updateStatusByProcessId(ProcessInstanceId,statusId);
+    @PostMapping("/UpdateRequestByProcessId/{processInstanceId}/{statusId}")
+    public StatusDto updateStatusByProcessId(
+            @PathVariable String processInstanceId,
+            @PathVariable Integer statusId) {
+        return requestService.updateStatusByProcessId(processInstanceId, statusId);
     }
 
     @DeleteMapping("DeleteRequest/{id}")

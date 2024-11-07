@@ -1,6 +1,7 @@
 package com.example.process.service.requestService;
 
 import com.example.process.DTO.RequestDTO;
+import com.example.process.DTO.StatusDto;
 import com.example.process.entity.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ public interface IServiceRequest {
    // public Request createRequestWithStatus(Request request, Integer statusId);
     //Request saveRequest(Request request);
     RequestDTO updateRequest(Integer id, RequestDTO requestDTO);
-    void updateStatusByProcessId(String processInstanceId,Integer idStatus);
+     StatusDto updateStatusByProcessId(String processInstanceId, Integer statusId);
      void deleteRequest(Integer id);
 
     Page<RequestDTO> getAllPageRequest(Pageable pageable);

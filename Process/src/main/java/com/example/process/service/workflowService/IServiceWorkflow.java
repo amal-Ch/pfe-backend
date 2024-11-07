@@ -12,7 +12,9 @@ public interface IServiceWorkflow {
 
         List<WorkflowProcess> getAllProcesses();
         Optional<WorkflowProcess> getProcessById(Integer id);
+        WorkflowProcess createProcessWithDiag(WorkflowProcess process);
         WorkflowProcess createProcess(WorkflowProcess process);
+
         WorkflowProcess updateProcess(Integer id, WorkflowProcess processDetails);
         void deleteProcess(Integer id);
         Page<WorkflowDto> getAllPageWorkflow(Pageable pageable);

@@ -1,9 +1,10 @@
 package com.example.workflow.Controller;
 
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.workflow.DTO.StatusDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -20,20 +21,19 @@ public class listenerController {
         this.restTemplate = restTemplate;
     }
 
-    @PostMapping("/UpdateRequestByProcessId/{ProcessInstanceId}/{statusId}")
-    public void notify(String ProcessInstanceId, Integer statusId){
-        String url = String.format("http://localhost:8096/api/requests/UpdateRequestByProcessId/%s/%s", ProcessInstanceId, statusId);
+    @PostMapping("UpdateRequestByProcessId")
+    public StatusDto notify(@RequestBody StatusDto statusDto) {
+        String url = "http://localhost:8096/api/requests/UpdateRequestByProcessId/"
+                + statusDto.getProcessInstanceId() + "/" + statusDto.getStatusId();
 
-        try {
-            restTemplate.postForEntity(url, null, Void.class);  // Use Void.class if response body is not needed
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            System.err.println("HTTP error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
-            throw new RuntimeException("Failed to update request: " + e.getMessage(), e);
-        } catch (ResourceAccessException e) {
-            System.err.println("Resource access error: " + e.getMessage());
-            throw new RuntimeException("Camunda server not reachable: " + e.getMessage(), e);
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-            throw new RuntimeException("Unexpected error occurred: " + e.getMessage(), e);
-        }}}
+        ResponseEntity<StatusDto> response = restTemplate.postForEntity(url, null, StatusDto.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to update request: " + response.getStatusCode());
+        }
+    }
+}
+
 

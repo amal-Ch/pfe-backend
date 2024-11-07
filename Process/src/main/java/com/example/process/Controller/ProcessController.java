@@ -43,7 +43,7 @@ public class ProcessController {
     public ResponseEntity<?> addProcessWithDiagram(@RequestBody WorkflowProcess payload) {
         try {
             // Save workflow with processKey and diagram XML
-            WorkflowProcess createdWorkflow = processService.createProcess(payload);
+            WorkflowProcess createdWorkflow = processService.createProcessWithDiag(payload);
             return ResponseEntity.ok(createdWorkflow);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -51,11 +51,11 @@ public class ProcessController {
         }
     }
 
-//    @PostMapping("/AddProcess")
-//    public ResponseEntity<WorkflowProcess> createProcess(@RequestBody WorkflowProcess process) {
-//        WorkflowProcess createdProcess = processService.createProcess(process);
-//        return ResponseEntity.ok().body(createdProcess);
-//    }
+    @PostMapping("/AddProcess")
+    public ResponseEntity<WorkflowProcess> createProcess(@RequestBody WorkflowProcess process) {
+        WorkflowProcess createdProcess = processService.createProcess(process);
+        return ResponseEntity.ok().body(createdProcess);
+    }
 
     @PutMapping("UpdateProcess/{id}")
     public ResponseEntity<WorkflowProcess> updateProcess(@PathVariable Integer id, @RequestBody WorkflowProcess processDetails) {

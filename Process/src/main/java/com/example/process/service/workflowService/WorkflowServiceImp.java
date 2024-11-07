@@ -33,7 +33,7 @@ public class WorkflowServiceImp implements IServiceWorkflow{
     }
 
     @Override
-    public WorkflowProcess createProcess(WorkflowProcess process) {
+    public WorkflowProcess createProcessWithDiag(WorkflowProcess process) {
         // Step 1: Save the workflow to the database
         WorkflowProcess savedProcess = processRepository.save(process);
 
@@ -58,6 +58,23 @@ public class WorkflowServiceImp implements IServiceWorkflow{
 //            throw new RuntimeException("BPMN file not found");
 //        }
        // return processRepository.save(process);
+    }
+    @Override
+    public WorkflowProcess createProcess(WorkflowProcess process) {
+        // Step 1: Save the workflow to the database
+        WorkflowProcess savedProcess = processRepository.save(process);
+
+        // Step 3: Optional - Verify by loading the saved file
+        try {
+            String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
+            if (bpmnContent == null) {
+                throw new RuntimeException("Failed to load the BPMN file after saving.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading saved BPMN file: " + e.getMessage(), e);
+        }
+
+        return savedProcess;
     }
 
 

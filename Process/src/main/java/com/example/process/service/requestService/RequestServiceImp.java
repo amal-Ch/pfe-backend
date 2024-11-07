@@ -1,6 +1,7 @@
 package com.example.process.service.requestService;
 
 import com.example.process.DTO.RequestDTO;
+import com.example.process.DTO.StatusDto;
 import com.example.process.email.Service.impl.EmailServiceImpl;
 import com.example.process.email.Service.impl.PdfGeneratorService;
 import com.example.process.entity.Request;
@@ -127,13 +128,21 @@ public class RequestServiceImp implements IServiceRequest {
     }
 
     @Override
-    public void updateStatusByProcessId(String processInstanceId, Integer idStatus) {
-        Request request = requestRepository.findByProcessInstanceId(processInstanceId).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-        Status status = statusRepository.findById(idStatus).orElse(null);
+    public StatusDto updateStatusByProcessId(String processInstanceId, Integer statusId) {
+        // Find the request by process instance ID
+        Request request = requestRepository.findByProcessInstanceId(processInstanceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        // Find the status by ID
+        Status status = statusRepository.findById(statusId)
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+        // Update the request status
         request.setStatus(status);
         requestRepository.save(request);
 
-        //requestRepository.updateStatusByProcessInstanceId(status,processInstanceId);
+        // Return StatusDto with relevant data
+        return new StatusDto(status.getIdStatus(), processInstanceId, status.getTitle());
     }
 
 

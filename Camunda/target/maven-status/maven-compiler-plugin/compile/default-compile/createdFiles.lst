@@ -1,8 +1,10 @@
+com\example\workflow\listeners\TaskCompletionListener.class
 com\example\workflow\services\ProcessDeployer.class
 com\example\workflow\services\ProcessService.class
 com\example\workflow\delegates\DelegateController.class
 com\example\workflow\services\SayByeDelegate.class
 com\example\workflow\Controller\listenerController.class
+com\example\workflow\listeners\TaskCompletionTaskListener.class
 com\example\workflow\services\BpmnFileserviceCamundaMS.class
 com\example\workflow\DTO\TaskDto.class
 com\example\workflow\Controller\ProcessController.class

@@ -55,6 +55,7 @@ public class RequestController {
             }
 
             camundaService.completeTask(taskId, variables);
+            camundaService.notifyCamundaOfTaskCompletion(new StatusDto(2, processInstanceId, "User Task Completed"));
 
             return ResponseEntity.ok(Collections.singletonMap("message", "Task completed successfully for task ID: " + taskId));
         } catch (Exception e) {
@@ -106,12 +107,12 @@ public class RequestController {
         }
     }
     @PostMapping("/UpdateRequestByProcessId/{processInstanceId}/{statusId}")
-    public StatusDto updateStatusByProcessId(
+    public RequestDTO updateStatusByProcessId(
             @PathVariable String processInstanceId,
             @PathVariable Integer statusId) {
-        return requestService.updateStatusByProcessId(processInstanceId, statusId);
+        // Update request status and convert to DTO
+        return RequestDTO.toDTO(requestService.updateRequestByProcessId(processInstanceId, statusId));
     }
-
     @DeleteMapping("DeleteRequest/{id}")
     public void deleteRequest(@PathVariable Integer id) {
         requestService.deleteRequest(id);

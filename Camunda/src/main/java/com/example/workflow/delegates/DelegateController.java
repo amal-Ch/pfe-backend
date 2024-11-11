@@ -15,7 +15,7 @@ public class DelegateController implements JavaDelegate {
                 serviceTask1();
             } else if ("Activity_1mdhaz6".equals(activityId)) {
                 serviceTask2();
-            }
+            } else serviceTask3();
         } catch (Exception e) {
             // Log and rethrow the exception
             System.err.println("Error executing service task: " + e.getMessage());
@@ -33,5 +33,9 @@ public class DelegateController implements JavaDelegate {
     public void serviceTask2() {
         // Business logic for service task 2
         System.out.println("Service task 2");
+    }
+    public void serviceTask3() {
+        // Business logic for service task 2
+        System.out.println("Service task 3");
     }
 }

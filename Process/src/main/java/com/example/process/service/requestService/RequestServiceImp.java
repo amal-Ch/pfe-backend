@@ -128,21 +128,26 @@ public class RequestServiceImp implements IServiceRequest {
     }
 
     @Override
-    public StatusDto updateStatusByProcessId(String processInstanceId, Integer statusId) {
-        // Find the request by process instance ID
+    public Request updateRequestByProcessId(String processInstanceId, Integer statusId) {
+        // Fetch and update the request by processInstanceId
         Request request = requestRepository.findByProcessInstanceId(processInstanceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+                .orElseThrow(() -> new RuntimeException("Request not found with processInstanceId: " + processInstanceId));
 
-        // Find the status by ID
-        Status status = statusRepository.findById(statusId)
-                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+        Status newStatus = statusRepository.findById(statusId)
+                .orElseThrow(() -> new RuntimeException("Status not found with id: " + statusId));
 
-        // Update the request status
-        request.setStatus(status);
-        requestRepository.save(request);
+        // Update the status in the request
+        request.updateStatus(newStatus);
+        Request updatedRequest = requestRepository.save(request);
 
-        // Return StatusDto with relevant data
-        return new StatusDto(status.getIdStatus(), processInstanceId, status.getTitle());
+        // Create a StatusDto to notify Camunda about the update
+        StatusDto statusDto = new StatusDto(statusId, processInstanceId, newStatus.getTitle());
+
+        camundaService.notifyCamundaService(statusDto);
+        // Notify Camunda service
+       // camundaService.notifyCamundaService(statusDto);
+
+        return updatedRequest;
     }
 
 

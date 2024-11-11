@@ -1,5 +1,6 @@
 package com.example.process.service.requestService;
 
+import com.example.process.DTO.StatusDto;
 import com.example.process.DTO.TaskDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,45 @@ public class CamundaService {
         this.restTemplate = restTemplate;
     }
 
+    public void notifyCamundaOfTaskCompletion(StatusDto statusDto) {
+        String url = "http://localhost:8094/api/listener/notifyTaskCompletion"; // URL in Camunda microservice
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<StatusDto> requestEntity = new HttpEntity<>(statusDto, headers);
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(url, requestEntity, Void.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("Camunda microservice notified of task completion");
+            } else {
+                System.err.println("Failed to notify Camunda, status: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error notifying Camunda: " + e.getMessage(), e);
+        }
+    }
+    public void notifyCamundaService(StatusDto statusDto) {
+        String url = "http://localhost:8094/api/listener/notify"; // URL to Camunda microservice listener endpoint
+
+        try {
+            // Set headers and make a POST request
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<StatusDto> requestEntity = new HttpEntity<>(statusDto, headers);
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(url, requestEntity, Void.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("Successfully notified Camunda service");
+            } else {
+                System.err.println("Failed to notify Camunda service, status: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error notifying Camunda service: " + e.getMessage(), e);
+        }
+    }
     public String startProcess(String processKey) {
         String url = "http://localhost:8094/api/engine-rest/process-definition/key/" + processKey + "/start";
         try {

@@ -16,8 +16,8 @@ public interface IServiceRequest {
    // public Request createRequestWithStatus(Request request, Integer statusId);
     //Request saveRequest(Request request);
     RequestDTO updateRequest(Integer id, RequestDTO requestDTO);
-     StatusDto updateStatusByProcessId(String processInstanceId, Integer statusId);
-     void deleteRequest(Integer id);
+    Request updateRequestByProcessId(String processInstanceId, Integer statusId);
+    void deleteRequest(Integer id);
 
     Page<RequestDTO> getAllPageRequest(Pageable pageable);
     Page<RequestDTO> searchRequests(String query,Pageable pageable);

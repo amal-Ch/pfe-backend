@@ -3,6 +3,7 @@
   <bpmn:process id="DemandeAutorisation" name="DemandeD&#39;autorisation" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:extensionElements>
       <camunda:executionListener class="com.example.workflow.listeners.MyExecutionListener" event="start" />
+      <camunda:executionListener delegateExpression="${taskCompletionListener}" event="end" />
     </bpmn:extensionElements>
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_14dy0jg</bpmn:outgoing>
@@ -14,7 +15,9 @@
     <bpmn:sequenceFlow id="Flow_04x3xta" sourceRef="Activity_1sss45v" targetRef="Event_1s67trh" />
     <bpmn:userTask id="Activity_1sss45v" name="demande autorisation">
       <bpmn:extensionElements>
-        <camunda:executionListener class="com.example.process.listenres.MyExecutionListener" event="start" />
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="start" />
+        <camunda:taskListener delegateExpression="${taskCompletionTaskListener}" event="complete" />
+        <camunda:executionListener delegateExpression="${taskCompletionListener}" event="end" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14dy0jg</bpmn:incoming>
       <bpmn:outgoing>Flow_04x3xta</bpmn:outgoing>

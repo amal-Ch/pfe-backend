@@ -4,6 +4,7 @@ C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\wor
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\listeners\MyExecutionListener.java
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\listeners\TaskCompletionTaskListener.java
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\services\ProcessService.java
+C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\DTO\RequestDTO.java
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\DTO\StatusDto.java
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\services\BpmnFileserviceCamundaMS.java
 C:\Users\USER\Documents\GitHub\pfe-backend\Camunda\src\main\java\com\example\workflow\services\SayByeDelegate.java

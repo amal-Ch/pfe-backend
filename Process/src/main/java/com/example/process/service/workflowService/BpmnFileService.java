@@ -28,7 +28,7 @@ public class BpmnFileService {
     public void saveBpmnFile(String processKey, String diagramXML) {
         try {
             // Define a path outside of the resources directory for runtime access
-            String directoryPath = "workflows";  // This creates a "workflows" folder in the project root
+            String directoryPath = "Process/src/main/resources/WorkFlows";  // This creates a "workflows" folder in the project root
             File directory = new File(directoryPath);
 
             // Ensure the directory exists

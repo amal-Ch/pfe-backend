@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkflowServiceImp implements IServiceWorkflow{
@@ -23,8 +24,10 @@ public class WorkflowServiceImp implements IServiceWorkflow{
     private BpmnFileService bpmnFileService;
 
     @Override
-    public List<WorkflowProcess> getAllProcesses() {
-        return processRepository.findAll();
+    public List<WorkflowDto> getAllProcesses() {
+        return processRepository.findAll().stream()
+                .map(WorkflowDto::toDTO)  // Using the static toDTO method
+                .collect(Collectors.toList());
     }
 
     @Override

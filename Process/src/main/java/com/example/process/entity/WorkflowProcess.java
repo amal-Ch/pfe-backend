@@ -2,6 +2,7 @@ package com.example.process.entity;
 
 
 
+import com.example.process.DTO.WorkflowDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,4 +48,13 @@ public class WorkflowProcess {
             inverseJoinColumns = @JoinColumn(name = "status_id")
     )
     private Set<Status> statuses;
+    public static WorkflowDto toDTO(WorkflowProcess entity) {
+        WorkflowDto dto = new WorkflowDto();
+        dto.setIdProcess(entity.getIdProcess());
+        dto.setCode(entity.getCode());
+        dto.setTitle(entity.getTitle());
+        dto.setProcessKey(entity.getProcessKey());
+        dto.setDateAdded(entity.getDateAdded());
+        return dto;
+    }
 }

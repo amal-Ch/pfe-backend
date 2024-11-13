@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface IServiceWorkflow {
 
-        List<WorkflowProcess> getAllProcesses();
+        List<WorkflowDto> getAllProcesses();
         Optional<WorkflowProcess> getProcessById(Integer id);
         WorkflowProcess createProcessWithDiag(WorkflowProcess process);
         WorkflowProcess createProcess(WorkflowProcess process);

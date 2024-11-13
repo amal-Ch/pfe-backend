@@ -77,6 +77,10 @@
         <dc:Bounds x="280" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ahidyy_di" bpmnElement="Activity_00rfyws">
+        <dc:Bounds x="540" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_04jx2l3_di" bpmnElement="Gateway_04jx2l3" isMarkerVisible="true">
         <dc:Bounds x="795" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -85,10 +89,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0qcpgop_di" bpmnElement="Activity_0h14lpi">
         <dc:Bounds x="1100" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ahidyy_di" bpmnElement="Activity_00rfyws">
-        <dc:Bounds x="540" y="77" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1majysr_di" bpmnElement="Flow_1majysr">
         <di:waypoint x="215" y="117" />

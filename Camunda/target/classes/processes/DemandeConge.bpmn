@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_093xkqr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_093xkqr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:process id="DemandeConge" name="DemandeDeConge" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:extensionElements>
+      <camunda:executionListener delegateExpression="${myExecutionListener}" event="end" />
+    </bpmn:extensionElements>
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1majysr</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:endEvent id="Event_0uijg6s">
-      <bpmn:incoming>Flow_1k5jc18</bpmn:incoming>
+      <bpmn:incoming>Flow_1kpx5ed</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_0idldsc" name="demande conge">
+    <bpmn:userTask id="Activity_0idldsc" name="employe">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="end" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1majysr</bpmn:incoming>
-      <bpmn:outgoing>Flow_1k5jc18</bpmn:outgoing>
+      <bpmn:incoming>Flow_0szddkk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m6c7d3</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_1majysr" sourceRef="StartEvent_1" targetRef="Activity_0idldsc" />
-    <bpmn:sequenceFlow id="Flow_1k5jc18" sourceRef="Activity_0idldsc" targetRef="Event_0uijg6s" />
+    <bpmn:sequenceFlow id="Flow_1m6c7d3" sourceRef="Activity_0idldsc" targetRef="Activity_00rfyws">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="take" />
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == '2'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_00rfyws" name="chef">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m6c7d3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eo5dhu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_04jx2l3">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0eo5dhu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0szddkk</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jkfj7v</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0eo5dhu" sourceRef="Activity_00rfyws" targetRef="Gateway_04jx2l3" />
+    <bpmn:sequenceFlow id="Flow_0szddkk" sourceRef="Gateway_04jx2l3" targetRef="Activity_0idldsc">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="take" />
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == '3'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1jkfj7v" sourceRef="Gateway_04jx2l3" targetRef="Activity_0vf3dnr">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="take" />
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == '4'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_0vf3dnr" name="rh">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${myExecutionListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jkfj7v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oxnnpa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1oxnnpa" sourceRef="Activity_0vf3dnr" targetRef="Activity_0h14lpi" />
+    <bpmn:serviceTask id="Activity_0h14lpi" name="notif" camunda:delegateExpression="${delegateController}">
+      <bpmn:incoming>Flow_1oxnnpa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kpx5ed</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1kpx5ed" sourceRef="Activity_0h14lpi" targetRef="Event_0uijg6s" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DemandeConge">
@@ -20,18 +71,54 @@
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0uijg6s_di" bpmnElement="Event_0uijg6s">
-        <dc:Bounds x="482" y="99" width="36" height="36" />
+        <dc:Bounds x="1262" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1sqhne7_di" bpmnElement="Activity_0idldsc">
         <dc:Bounds x="280" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ahidyy_di" bpmnElement="Activity_00rfyws">
+        <dc:Bounds x="540" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_04jx2l3_di" bpmnElement="Gateway_04jx2l3" isMarkerVisible="true">
+        <dc:Bounds x="795" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04m4quy_di" bpmnElement="Activity_0vf3dnr">
+        <dc:Bounds x="920" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qcpgop_di" bpmnElement="Activity_0h14lpi">
+        <dc:Bounds x="1100" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1majysr_di" bpmnElement="Flow_1majysr">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="280" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1k5jc18_di" bpmnElement="Flow_1k5jc18">
+      <bpmndi:BPMNEdge id="Flow_1m6c7d3_di" bpmnElement="Flow_1m6c7d3">
         <di:waypoint x="380" y="117" />
-        <di:waypoint x="482" y="117" />
+        <di:waypoint x="540" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eo5dhu_di" bpmnElement="Flow_0eo5dhu">
+        <di:waypoint x="640" y="117" />
+        <di:waypoint x="795" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0szddkk_di" bpmnElement="Flow_0szddkk">
+        <di:waypoint x="820" y="142" />
+        <di:waypoint x="820" y="350" />
+        <di:waypoint x="330" y="350" />
+        <di:waypoint x="330" y="157" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jkfj7v_di" bpmnElement="Flow_1jkfj7v">
+        <di:waypoint x="845" y="117" />
+        <di:waypoint x="920" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oxnnpa_di" bpmnElement="Flow_1oxnnpa">
+        <di:waypoint x="1020" y="117" />
+        <di:waypoint x="1100" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kpx5ed_di" bpmnElement="Flow_1kpx5ed">
+        <di:waypoint x="1200" y="117" />
+        <di:waypoint x="1262" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

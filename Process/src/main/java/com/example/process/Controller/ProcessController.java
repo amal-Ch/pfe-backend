@@ -29,7 +29,7 @@ public class ProcessController {
         camundaService.startProcess(processKey);
     }
     @GetMapping("/AllProcesses")
-    public List<WorkflowProcess> getAllProcesses() {
+    public List<WorkflowDto> getAllProcesses() {
         return processService.getAllProcesses();
     }
 

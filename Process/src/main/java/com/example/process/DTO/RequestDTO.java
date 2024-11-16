@@ -33,4 +33,14 @@ public class RequestDTO {
 
         return dto;
     }
+    public static  Request convertToEntity(RequestDTO requestDTO) {
+        Request request = new Request();
+        request.setFullName(requestDTO.getFullName());
+        request.setObject(requestDTO.getObject());
+        request.setUserId(requestDTO.getUserId());
+        request.setAddedDateRequest(requestDTO.getAddedDateRequest());
+        request.setProcessInstanceId(requestDTO.getProcessInstanceId());
+
+        return request;
+    }
 }

@@ -3,20 +3,17 @@ package com.example.process.Controller;
 import com.example.process.DTO.RequestDTO;
 import com.example.process.DTO.StatusDto;
 import com.example.process.DTO.TaskDTO;
-import com.example.process.entity.Request;
 import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
 import com.example.process.service.requestService.CamundaService;
 import com.example.process.service.requestService.IServiceRequest;
-import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +65,7 @@ public class RequestController {
     public List<RequestDTO> getAllRequests() {
         return requestService.getAllRequests();
     }
+
     @PostMapping("/AddRequest")
     public ResponseEntity<RequestDTO> addRequest(@RequestBody RequestDTO requestDTO) {
         try {
@@ -81,6 +79,15 @@ public class RequestController {
         }
     }
 
+    @GetMapping("/requests-by-id")
+    public ResponseEntity<Page<RequestDTO>> getAllPagedRequestByIdUser(
+            @RequestParam(value = "userId", required = true) Long userId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        Pageable pageable=PageRequest.of(page,size);
+        Page<RequestDTO> requestDTOS=requestService.getRequestByUser(pageable,userId);
+    return new ResponseEntity<>(requestDTOS,HttpStatus.OK);
+    }
 
     @PutMapping("UpdateRequest/{id}")
     public ResponseEntity<RequestDTO> updateRequest(@PathVariable Integer id, @RequestBody RequestDTO requestDTO) {
@@ -93,6 +100,7 @@ public class RequestController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/UpdateRequestByProcessId/{processInstanceId}/{statusId}")
     public RequestDTO updateStatusByProcessId(
             @PathVariable String processInstanceId,
@@ -100,6 +108,7 @@ public class RequestController {
         // Update request status and convert to DTO
         return RequestDTO.toDTO(requestService.updateRequestByProcessId(processInstanceId, statusId));
     }
+
     @DeleteMapping("DeleteRequest/{id}")
     public void deleteRequest(@PathVariable Integer id) {
         requestService.deleteRequest(id);
@@ -116,9 +125,9 @@ public class RequestController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<RequestDTO>> searchRequests(
-            @RequestParam(value = "search",required = false) String search,
-            @RequestParam(value = "page",defaultValue = "0") int page,
-            @RequestParam(value = "size",defaultValue = "10") int size) {
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<RequestDTO> requestDtos = requestService.searchRequests(search, pageable);
         return ResponseEntity.ok(requestDtos);

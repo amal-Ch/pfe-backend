@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface RequestRepository  extends JpaRepository<Request, Integer> {
-    List<Request> findByUserId(Long userId);
+    Page<Request> findByUserId(Pageable pageable ,Long userId);
     Optional <Request> findByProcessInstanceId(String processInstanceId);
 
     @Modifying

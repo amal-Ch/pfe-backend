@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString(exclude = "workflowProcess")
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Requests")
@@ -46,5 +46,19 @@ public class Request {
 
     public void updateStatus(Status newStatus) {
         this.status = newStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "idRequest=" + idRequest +
+                ", fullName='" + fullName + '\'' +
+                ", object='" + object + '\'' +
+                ", addedDateRequest=" + addedDateRequest +
+                ", userId=" + userId +
+                ", workflowProcess=" + workflowProcess +
+                ", processInstanceId='" + processInstanceId + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

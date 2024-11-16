@@ -11,7 +11,7 @@ import java.util.List;
 public interface IServiceRequest {
 
      List<RequestDTO> getAllRequests();
-
+Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId);
     RequestDTO addRequest(RequestDTO requestDTO);
    // public Request createRequestWithStatus(Request request, Integer statusId);
     //Request saveRequest(Request request);

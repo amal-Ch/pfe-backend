@@ -17,7 +17,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString(exclude = "requests")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -48,13 +47,17 @@ public class WorkflowProcess {
             inverseJoinColumns = @JoinColumn(name = "status_id")
     )
     private Set<Status> statuses;
-    public static WorkflowDto toDTO(WorkflowProcess entity) {
-        WorkflowDto dto = new WorkflowDto();
-        dto.setIdProcess(entity.getIdProcess());
-        dto.setCode(entity.getCode());
-        dto.setTitle(entity.getTitle());
-        dto.setProcessKey(entity.getProcessKey());
-        dto.setDateAdded(entity.getDateAdded());
-        return dto;
+
+    @Override
+    public String toString() {
+        return "WorkflowProcess{" +
+                "idProcess=" + idProcess +
+                ", Code='" + Code + '\'' +
+                ", Title='" + Title + '\'' +
+                ", ProcessKey='" + ProcessKey + '\'' +
+                ", diagramXML='" + diagramXML + '\'' +
+                ", dateAdded=" + dateAdded +
+                ", statuses=" + statuses +
+                '}';
     }
 }

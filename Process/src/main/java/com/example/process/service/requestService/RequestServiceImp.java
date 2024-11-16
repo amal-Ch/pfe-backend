@@ -11,8 +11,6 @@ import com.example.process.exception.ResourceNotFoundException;
 import com.example.process.repository.ProcessRepository;
 import com.example.process.repository.RequestRepository;
 import com.example.process.repository.StatusRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +40,6 @@ public class RequestServiceImp implements IServiceRequest {
     @Autowired
     private EmailServiceImpl emailService;
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestServiceImp.class);
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
@@ -58,48 +53,61 @@ public class RequestServiceImp implements IServiceRequest {
     }
 
     @Override
+    public Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId) {
+        Page<Request> requests= requestRepository.findByUserId(pageable,userId);
+        return requests.map(RequestDTO::toDTO);
+    }
+
+    @Override
     public RequestDTO addRequest(RequestDTO requestDTO) throws ResourceNotFoundException {
         // Retrieve the associated workflow process
-        Optional<WorkflowProcess> workflowProcessOpt = processRepository.findById(requestDTO.getIdProcess());
-        if (!workflowProcessOpt.isPresent()) {
-            throw new ResourceNotFoundException("Workflow Process not found with id " + requestDTO.getIdProcess());
-        }
+        WorkflowProcess workflowProcess = processRepository.findById(requestDTO.getIdProcess())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Workflow Process not found with id " + requestDTO.getIdProcess()
+                ));
 
-        // Convert DTO to entity and set the workflow process
-        Request request = convertToEntity(requestDTO);
-        request.setWorkflowProcess(workflowProcessOpt.get());
-        // Set userId from DTO
+        // Convert DTO to entity and set the workflow process and userId
+        Request request = RequestDTO.convertToEntity(requestDTO);
+        request.setWorkflowProcess(workflowProcess);
         request.setUserId(requestDTO.getUserId());
 
+        // Retrieve the 'New' status and set it in the request
         Status newStatus = statusRepository.findByTitle("new")
                 .orElseThrow(() -> new ResourceNotFoundException("Status 'New' not found"));
         request.setStatus(newStatus);
 
-        // Start the process instance using the process key and get the process instance ID
-        String processKey = workflowProcessOpt.get().getProcessKey();
-        logger.info("Starting process with key: {}", processKey);
+        // Start the process instance using the process key and set the process instance ID
+        String processKey = workflowProcess.getProcessKey();
+
         String processInstanceId = camundaService.startProcess(processKey);
-
-        // Set the process instance ID in the request entity
         request.setProcessInstanceId(processInstanceId);
-
-
 
         // Save the request entity to the database
         Request savedRequest = requestRepository.save(request);
-        logger.info("Request saved: {}", savedRequest);
+
         // Generate PDF of the request data
         ByteArrayInputStream pdf = pdfGeneratorService.generatePdfForRequest(savedRequest);
 
         // Send email with the PDF as an attachment
-        try {
-            emailService.sendEmailWithAttachment("amalchibani3@outlook.com", "Your PDF", "Please find the attached PDF.", pdf);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        sendEmailWithPdf(pdf);
+
         // Convert the saved entity back to DTO and return it
         return convertToDto(savedRequest);
     }
+
+    private void sendEmailWithPdf(ByteArrayInputStream pdf) {
+        try {
+            emailService.sendEmailWithAttachment(
+                    "amalchibani3@outlook.com",
+                    "Your PDF",
+                    "Please find the attached PDF.",
+                    pdf
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to send email with PDF attachment", e);
+        }
+    }
+
 
 //    public Request createRequestWithStatus(Request request, Integer statusId) {
 //        Status status = statusRepository.findById(statusId)
@@ -145,7 +153,7 @@ public class RequestServiceImp implements IServiceRequest {
 
         camundaService.notifyCamundaService(statusDto);
         // Notify Camunda service
-       // camundaService.notifyCamundaService(statusDto);
+        // camundaService.notifyCamundaService(statusDto);
 
         return updatedRequest;
     }
@@ -156,7 +164,7 @@ public class RequestServiceImp implements IServiceRequest {
         requestDTO.setIdRequest(request.getIdRequest());
         requestDTO.setFullName(request.getFullName());
         requestDTO.setObject(request.getObject());
-        request.setUserId(requestDTO.getUserId());
+        requestDTO.setUserId(request.getUserId());
         requestDTO.setAddedDateRequest(request.getAddedDateRequest());
         requestDTO.setIdProcess(request.getWorkflowProcess().getIdProcess());
         requestDTO.setProcessInstanceId(request.getProcessInstanceId());
@@ -169,16 +177,6 @@ public class RequestServiceImp implements IServiceRequest {
         return requestDTO;
     }
 
-    private Request convertToEntity(RequestDTO requestDTO) {
-        Request request = new Request();
-        request.setFullName(requestDTO.getFullName());
-        request.setObject(requestDTO.getObject());
-        request.setUserId(requestDTO.getUserId());
-        request.setAddedDateRequest(requestDTO.getAddedDateRequest());
-        request.setProcessInstanceId(requestDTO.getProcessInstanceId());
-
-        return request;
-    }
 
     public Page<RequestDTO> getAllPageRequest(Pageable pageable) {
         Page<Request> RequestPage = requestRepository.findAll(pageable);

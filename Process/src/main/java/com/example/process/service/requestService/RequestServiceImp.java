@@ -59,6 +59,17 @@ public class RequestServiceImp implements IServiceRequest {
     }
 
     @Override
+    public Page<RequestDTO> getRequestsByStatus(Pageable pageable, Integer statusId, String statusTitle) {
+        Page<Request> requests = requestRepository.findByStatus_IdStatusAndStatus_Title(pageable, statusId, statusTitle);
+        return requests.map(RequestDTO::toDTO);
+    }
+    @Override
+    public Page<RequestDTO> getRequestsByUserAndStatus(Long userId, Integer statusId, String statusTitle, Pageable pageable) {
+        Page<Request> requests = requestRepository.findByUserIdAndStatus_IdStatusAndStatus_Title(userId, statusId, statusTitle, pageable);
+        return requests.map(RequestDTO::toDTO);
+    }
+
+    @Override
     public RequestDTO addRequest(RequestDTO requestDTO) throws ResourceNotFoundException {
         // Retrieve the associated workflow process
         WorkflowProcess workflowProcess = processRepository.findById(requestDTO.getIdProcess())

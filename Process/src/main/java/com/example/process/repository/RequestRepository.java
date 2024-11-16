@@ -16,6 +16,9 @@ import java.util.Optional;
 @Repository
 public interface RequestRepository  extends JpaRepository<Request, Integer> {
     Page<Request> findByUserId(Pageable pageable ,Long userId);
+    Page<Request> findByStatus_IdStatusAndStatus_Title(Pageable pageable, Integer idStatus, String title);
+
+    Page<Request> findByUserIdAndStatus_IdStatusAndStatus_Title(Long userId, Integer idStatus, String title, Pageable pageable);
     Optional <Request> findByProcessInstanceId(String processInstanceId);
 
     @Modifying

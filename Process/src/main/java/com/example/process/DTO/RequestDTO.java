@@ -9,6 +9,8 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequestDTO {
     private Integer idRequest;
     private String fullName;

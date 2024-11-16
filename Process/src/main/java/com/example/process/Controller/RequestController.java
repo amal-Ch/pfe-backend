@@ -88,6 +88,27 @@ public class RequestController {
         Page<RequestDTO> requestDTOS=requestService.getRequestByUser(pageable,userId);
     return new ResponseEntity<>(requestDTOS,HttpStatus.OK);
     }
+    @GetMapping("/by-status")
+    public ResponseEntity<Page<RequestDTO>> getRequestsByStatus(
+            @RequestParam Integer statusId,
+            @RequestParam String statusTitle,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RequestDTO> requests = requestService.getRequestsByStatus(pageable, statusId, statusTitle);
+        return ResponseEntity.ok(requests);
+    }
+    @GetMapping("/by-user-and-status")
+    public ResponseEntity<Page<RequestDTO>> getRequestsByUserAndStatus(
+            @RequestParam Long userId,
+            @RequestParam Integer statusId,
+            @RequestParam String statusTitle,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RequestDTO> requests = requestService.getRequestsByUserAndStatus(userId, statusId, statusTitle, pageable);
+        return ResponseEntity.ok(requests);
+    }
 
     @PutMapping("UpdateRequest/{id}")
     public ResponseEntity<RequestDTO> updateRequest(@PathVariable Integer id, @RequestBody RequestDTO requestDTO) {

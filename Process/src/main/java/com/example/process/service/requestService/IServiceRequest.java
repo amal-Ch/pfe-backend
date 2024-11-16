@@ -11,8 +11,10 @@ import java.util.List;
 public interface IServiceRequest {
 
      List<RequestDTO> getAllRequests();
-Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId);
-    RequestDTO addRequest(RequestDTO requestDTO);
+    Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId);
+    Page<RequestDTO> getRequestsByStatus(Pageable pageable, Integer statusId, String statusTitle);
+
+    Page<RequestDTO> getRequestsByUserAndStatus(Long userId, Integer statusId, String statusTitle, Pageable pageable);    RequestDTO addRequest(RequestDTO requestDTO);
    // public Request createRequestWithStatus(Request request, Integer statusId);
     //Request saveRequest(Request request);
     RequestDTO updateRequest(Integer id, RequestDTO requestDTO);

@@ -1,8 +1,12 @@
 package com.example.administration.controller;
 
 import com.example.administration.entity.User;
+import com.example.administration.payload.request.SignupRequest;
+import com.example.administration.payload.response.MessageResponse;
 import com.example.administration.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +19,25 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthController authController;
 
     // Create a new user
-    @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.ok(createdUser);
+    @PostMapping("/addUser")
+    public ResponseEntity<?> createUser(@RequestBody SignupRequest signUpRequest) {
+        return authController.registerUser(signUpRequest);
     }
 
     // Get all users
+//    @GetMapping("/getAll")
+//    public ResponseEntity<List<User>> getAllUsers() {
+//        List<User> users = userService.getAllUsers();
+//        return ResponseEntity.ok(users);
+//    }
     @GetMapping("/getAll")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
+        Page<User> userPage = userService.getAllUsersPage(pageable);
+        return ResponseEntity.ok(userPage);
     }
 
     // Get user by ID
@@ -38,13 +48,14 @@ public class UserController {
     }
 
     // Update user by ID
-    @PutMapping("/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+
+    @PutMapping("/editUser/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody SignupRequest updateRequest) {
         try {
-            User updatedUser = userService.updateUser(id, userDetails);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            User updatedUser = userService.updateUser(id, updateRequest);
+            return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(new MessageResponse(ex.getMessage()));
         }
     }
 

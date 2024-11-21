@@ -7,9 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IServiceRequest {
 
+     //void completeTaskWithNotification(String taskId, Map<String, Object> variables);
+     void sendNotificationEmail(String decisionMessage);
      List<RequestDTO> getAllRequests();
     Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId);
     Page<RequestDTO> getRequestsByStatus(Pageable pageable, Integer statusId, String statusTitle);

@@ -51,13 +51,31 @@ public class RequestController {
                         .body(Collections.singletonMap("error", "Missing 'decision' variable in request body"));
             }
 
+            String decision = variables.get("decision").toString();
+            String decisionMessage = mapDecisionToMessage(decision);
+
+
             camundaService.completeTask(taskId, variables);
-            camundaService.notifyCamundaOfTaskCompletion(new StatusDto(2, processInstanceId, "User Task Completed"));
+            //camundaService.notifyCamundaOfTaskCompletion(new StatusDto(2, processInstanceId, "User Task Completed"));
+            requestService.sendNotificationEmail(decisionMessage);
+
 
             return ResponseEntity.ok(Collections.singletonMap("message", "Task completed successfully for task ID: " + taskId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.singletonMap("error", "Error completing task: " + e.getMessage()));
+        }
+    }
+    private String mapDecisionToMessage(String decision) {
+        switch (decision) {
+            case "3":
+                return "Rejected by the Manager";
+            case "6":
+                return "Rejected by the HR";
+            case "7":
+                return "Accepted";
+            default:
+                return "Processed with unknown decision";
         }
     }
 

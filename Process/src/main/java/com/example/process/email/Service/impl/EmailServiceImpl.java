@@ -37,22 +37,26 @@ public class EmailServiceImpl implements EmailService {
 
             mimeMessageHelper.setFrom(fromEmail);
             mimeMessageHelper.setTo(to);
-            mimeMessageHelper.setCc(cc);
+
+            // Safely handle null or empty cc array
+            if (cc != null && cc.length > 0) {
+                mimeMessageHelper.setCc(cc);
+            }
+
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(body, true);
 
-            // Attach additional files
-            for (MultipartFile file : files) {
-                mimeMessageHelper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
+            // Handle file attachments if provided
+            if (files != null) {
+                for (MultipartFile file : files) {
+                    mimeMessageHelper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
+                }
             }
-
-            // Generate PDF from request data and attach it
-//            mimeMessageHelper.addAttachment("RequestDetails.pdf", new InputStreamResource(pdfStream));
 
             javaMailSender.send(mimeMessage);
             return "Email sent successfully.";
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
         }
     }
 

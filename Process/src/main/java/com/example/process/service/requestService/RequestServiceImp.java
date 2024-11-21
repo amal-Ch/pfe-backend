@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,10 +41,37 @@ public class RequestServiceImp implements IServiceRequest {
     private PdfGeneratorService pdfGeneratorService;
     @Autowired
     private EmailServiceImpl emailService;
-
-
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
+    public void sendNotificationEmail(String decisionMessage) {
+        try {
+            String to = "amalchibani3@outlook.com"; // Replace with recipient's email
+            String subject = "Task Completion Notification";
+            String body = String.format("The task has been processed with the decision: %s.", decisionMessage);
+
+            System.out.println("To: " + to);
+            System.out.println("Subject: " + subject);
+            System.out.println("Body: " + body);
+
+            emailService.sendMail(null, to, null, subject, body, null);
+            System.out.println("Notification email sent successfully to " + to);
+        } catch (Exception e) {
+            System.err.println("Error sending notification email: " + e.getMessage());
+        }
+    }
+
+    private void sendEmailWithPdf(ByteArrayInputStream pdf) {
+        try {
+            emailService.sendEmailWithAttachment(
+                    "amalchibani3@outlook.com",
+                    "Your PDF",
+                    "Please find the attached PDF.",
+                    pdf
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to send email with PDF attachment", e);
+        }
+    }
 
     public List<RequestDTO> getAllRequests() {
 
@@ -105,28 +134,6 @@ public class RequestServiceImp implements IServiceRequest {
         // Convert the saved entity back to DTO and return it
         return convertToDto(savedRequest);
     }
-
-    private void sendEmailWithPdf(ByteArrayInputStream pdf) {
-        try {
-            emailService.sendEmailWithAttachment(
-                    "amalchibani3@outlook.com",
-                    "Your PDF",
-                    "Please find the attached PDF.",
-                    pdf
-            );
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to send email with PDF attachment", e);
-        }
-    }
-
-
-//    public Request createRequestWithStatus(Request request, Integer statusId) {
-//        Status status = statusRepository.findById(statusId)
-//                .orElseThrow(() -> new RuntimeException("Status not found with id: " + statusId));
-//
-//        request.getStatuses().add(status);  // Add the "New" status to the Request
-//        return requestRepository.save(request);
-//    }
 
     @Override
     public RequestDTO updateRequest(Integer id, RequestDTO requestDTO) {

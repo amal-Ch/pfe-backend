@@ -6,10 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IServiceWorkflow {
-
+        List<Map<String, Object>> getWorkflowCountByYearAndMonth();
         List<WorkflowDto> getAllProcesses();
         Optional<WorkflowProcess> getProcessById(Integer id);
         WorkflowProcess createProcessWithDiag(WorkflowProcess process);

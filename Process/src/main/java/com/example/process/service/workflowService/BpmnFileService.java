@@ -10,18 +10,23 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class BpmnFileService {
     public String loadBpmnFile(String processKey) {
-        try {
-            // Load from the external "workflows" directory
-            File file = new File("workflows/" + processKey + ".bpmn");
-            if (!file.exists()) {
-                throw new FileNotFoundException("BPMN file not found for processKey: " + processKey);
-            }
+        // Validate the processKey input to avoid invalid file paths
+        if (processKey == null || processKey.trim().isEmpty()) {
+            throw new IllegalArgumentException("Process key must not be null or empty.");
+        }
 
-            // Read file content
-            byte[] bdata = FileCopyUtils.copyToByteArray(new FileInputStream(file));
+        // Construct the file path
+        File file = new File("workflows/" + processKey.trim() + ".bpmn");
+
+        try (InputStream inputStream = new FileInputStream(file)) {
+            // Read file content into a byte array
+            byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
+
+            // Convert to a String with UTF-8 encoding
             return new String(bdata, StandardCharsets.UTF_8);
+
         } catch (IOException e) {
-            throw new RuntimeException("BPMN file not found", e);
+            throw new RuntimeException("Error reading BPMN file for processKey: " + processKey, e);
         }
     }
 

@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
+import java.time.Month;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +23,35 @@ public class WorkflowServiceImp implements IServiceWorkflow{
     @Autowired
     private BpmnFileService bpmnFileService;
 
+    public List<Map<String, Object>> getWorkflowCountByYearAndMonth() {
+        List<Object[]> rawData = processRepository.findWorkflowCountGroupedByYearAndMonth();
+        List<Map<String, Object>> enhancedResponse = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            int year = ((Number) row[0]).intValue();  // Extract year
+            int month = ((Number) row[1]).intValue(); // Extract month
+            long workflowCount = ((Number) row[2]).longValue(); // Extract count
+
+            // Create a formatted date string like "MM-YYYY"
+            String formattedDate = String.format("%02d-%d", month, year);
+
+            // Get the month's name
+            String monthName = Month.of(month).name(); // Java's Month enum (in uppercase)
+            monthName = monthName.charAt(0) + monthName.substring(1).toLowerCase(); // Capitalize the first letter
+
+            // Add data to the response map
+            Map<String, Object> responseEntry = new HashMap<>();
+            responseEntry.put("formattedDate", formattedDate);
+            responseEntry.put("monthNumber", month);
+            responseEntry.put("monthName", monthName);
+            responseEntry.put("year", year);
+            responseEntry.put("workflowCount", workflowCount);
+
+            enhancedResponse.add(responseEntry);
+        }
+
+        return enhancedResponse;
+    }
     @Override
     public List<WorkflowDto> getAllProcesses() {
         return processRepository.findAll().stream()
@@ -56,11 +85,6 @@ public class WorkflowServiceImp implements IServiceWorkflow{
         }
 
         return savedProcess;
-//        String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
-//        if (bpmnContent == null) {
-//            throw new RuntimeException("BPMN file not found");
-//        }
-       // return processRepository.save(process);
     }
     @Override
     public WorkflowProcess createProcess(WorkflowProcess process) {
@@ -89,6 +113,7 @@ public class WorkflowServiceImp implements IServiceWorkflow{
         process.setCode(processDetails.getCode());
         process.setTitle(processDetails.getTitle());
         process.setProcessKey(processDetails.getProcessKey());
+        process.setDiagramXML(processDetails.getDiagramXML());
         String bpmnContent = bpmnFileService.loadBpmnFile(process.getProcessKey());
         if (bpmnContent == null) {
             throw new RuntimeException("BPMN file not found");

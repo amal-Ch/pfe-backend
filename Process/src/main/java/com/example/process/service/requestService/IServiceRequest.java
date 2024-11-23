@@ -6,13 +6,15 @@ import com.example.process.entity.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 public interface IServiceRequest {
 
-     //void completeTaskWithNotification(String taskId, Map<String, Object> variables);
-     void sendNotificationEmail(String decisionMessage);
+    List<Object[]> getRequestCountsGroupedByDate();
+    List<Object[]> getRequestCountsByStatusTitle();
+    void sendNotificationEmail(String decisionMessage);
      List<RequestDTO> getAllRequests();
     Page<RequestDTO> getRequestByUser(Pageable pageable,Long userId);
     Page<RequestDTO> getRequestsByStatus(Pageable pageable, Integer statusId, String statusTitle);

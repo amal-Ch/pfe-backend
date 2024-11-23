@@ -18,10 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,11 +42,20 @@ public class RequestServiceImp implements IServiceRequest {
     private EmailServiceImpl emailService;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
+    public List<Object[]> getRequestCountsGroupedByDate() {
+        return requestRepository.findRequestCountGroupedByDate();
+    }
+
+    @Override
+    public List<Object[]> getRequestCountsByStatusTitle() {
+        return requestRepository.countRequestsByStatusTitle();
+    }
+
     public void sendNotificationEmail(String decisionMessage) {
         try {
             String to = "amalchibani3@outlook.com"; // Replace with recipient's email
-            String subject = "Task Completion Notification";
-            String body = String.format("The task has been processed with the decision: %s.", decisionMessage);
+            String subject = " Request Response ";
+            String body = String.format("Your request has been processed with the decision: %s.", decisionMessage);
 
             System.out.println("To: " + to);
             System.out.println("Subject: " + subject);

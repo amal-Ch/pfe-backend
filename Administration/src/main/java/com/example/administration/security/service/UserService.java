@@ -12,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -28,6 +25,23 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder encoder;
+
+
+    public List<Map<String, Object>> getRoleUserCounts() {
+        // Using the custom query method from the RoleRepository
+        List<Object[]> results = roleRepository.findRoleUserCounts();
+
+        // Convert the result into a list of maps for easier handling in the controller
+        List<Map<String, Object>> roleUserCounts = new ArrayList<>();
+        for (Object[] result : results) {
+            Map<String, Object> roleData = new HashMap<>();
+            roleData.put("roleName", result[0]);
+            roleData.put("userCount", result[1]);
+            roleUserCounts.add(roleData);
+        }
+
+        return roleUserCounts;
+    }
 
     // Get all users
     public List<User> getAllUsers() {

@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,15 @@ public class RequestController {
             default:
                 return "Processed with unknown decision";
         }
+    }
+    @GetMapping("/count-by-date")
+    public ResponseEntity<List<Object[]>> getRequestCountsGroupedByDate() {
+        List<Object[]> counts = requestService.getRequestCountsGroupedByDate();
+        return ResponseEntity.ok(counts);
+    }
+    @GetMapping("/Stat-requests-by-status")
+    public List<Object[]> getRequestCountsByStatusTitle() {
+        return requestService.getRequestCountsByStatusTitle();
     }
 
     @GetMapping("/AllRequests")

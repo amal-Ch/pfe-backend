@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -22,18 +23,16 @@ public class UserController {
     @Autowired
     private AuthController authController;
 
+    @GetMapping("/role-user-counts")
+    public List<Map<String, Object>> getRoleUserCounts() {
+        return userService.getRoleUserCounts();
+    }
+
     // Create a new user
     @PostMapping("/addUser")
     public ResponseEntity<?> createUser(@RequestBody SignupRequest signUpRequest) {
         return authController.registerUser(signUpRequest);
     }
-
-    // Get all users
-//    @GetMapping("/getAll")
-//    public ResponseEntity<List<User>> getAllUsers() {
-//        List<User> users = userService.getAllUsers();
-//        return ResponseEntity.ok(users);
-//    }
     @GetMapping("/getAll")
     public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
         Page<User> userPage = userService.getAllUsersPage(pageable);

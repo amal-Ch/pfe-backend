@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/processes")
@@ -23,6 +24,11 @@ public class ProcessController {
 
     @Autowired
     private CamundaService camundaService;
+    @GetMapping("/count-by-year-and-month")
+    public ResponseEntity<List<Map<String, Object>>> getWorkflowCountByYearAndMonth() {
+        List<Map<String, Object>> workflowCounts = processService.getWorkflowCountByYearAndMonth();
+        return ResponseEntity.ok(workflowCounts);
+    }
 
     @PostMapping("/{processKey}/start")
     public void startProcess(@PathVariable String processKey) {
@@ -41,14 +47,8 @@ public class ProcessController {
     }
     @PostMapping("/AddProcessWithDiagram")
     public ResponseEntity<?> addProcessWithDiagram(@RequestBody WorkflowProcess payload) {
-        try {
-            // Save workflow with processKey and diagram XML
-            WorkflowProcess createdWorkflow = processService.createProcessWithDiag(payload);
-            return ResponseEntity.ok(createdWorkflow);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error saving workflow and diagram: " + e.getMessage());
-        }
+        WorkflowProcess createdWorkflow = processService.createProcessWithDiag(payload);
+        return ResponseEntity.ok(createdWorkflow);
     }
 
     @PostMapping("/AddProcess")

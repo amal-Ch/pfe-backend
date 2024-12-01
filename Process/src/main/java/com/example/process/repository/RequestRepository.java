@@ -16,11 +16,13 @@ import java.util.Optional;
 
 @Repository
 public interface RequestRepository  extends JpaRepository<Request, Integer> {
-   // @Query(" SELECT r.addedDateRequest AS request_date FROM Request r ORDER BY r.addedDateRequest DESC")
-//   @Query(value = "SELECT DATE(r.addedDateRequest) AS request_date, COUNT(*) AS request_count" +
-//           " FROM Request r GROUP BY DATE(r.addedDateRequest) ORDER BY DATE(r.addedDateRequest) DESC")
+
+ @Query("SELECT r.workflowProcess.Title, COUNT(r) " +
+         "FROM Request r " + "GROUP BY r.workflowProcess.Title")
+ List<Object[]> countRequestsByWorkflowTitle();
+
    @Query(value = " SELECT DATE(r.date_added_request) AS request_date, COUNT(*) AS request_count FROM requests r " +
-           "GROUP BY DATE(r.date_added_request) ORDER BY DATE(r.date_added_request) DESC", nativeQuery = true)
+           "GROUP BY DATE(r.date_added_request) ORDER BY DATE(r.date_added_request) ASC", nativeQuery = true)
     List<Object[]> findRequestCountGroupedByDate();
 
     @Query(value = "SELECT s.title, COUNT(r.idRequest) FROM Request  r JOIN Status s ON r.status.idStatus = s.idStatus GROUP BY s.title")

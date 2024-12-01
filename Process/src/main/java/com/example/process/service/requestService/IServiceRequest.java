@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IServiceRequest {
-
+    List<Object[]> getRequestCountByWorkflowTitle();
     List<Object[]> getRequestCountsGroupedByDate();
     List<Object[]> getRequestCountsByStatusTitle();
     void sendNotificationEmail(String decisionMessage);
@@ -20,8 +20,7 @@ public interface IServiceRequest {
     Page<RequestDTO> getRequestsByStatus(Pageable pageable, Integer statusId, String statusTitle);
 
     Page<RequestDTO> getRequestsByUserAndStatus(Long userId, Integer statusId, String statusTitle, Pageable pageable);    RequestDTO addRequest(RequestDTO requestDTO);
-   // public Request createRequestWithStatus(Request request, Integer statusId);
-    //Request saveRequest(Request request);
+
     RequestDTO updateRequest(Integer id, RequestDTO requestDTO);
     Request updateRequestByProcessId(String processInstanceId, Integer statusId);
     void deleteRequest(Integer id);

@@ -14,7 +14,7 @@ import java.util.List;
 public interface ProcessRepository extends JpaRepository<WorkflowProcess, Integer> {
     @Query(value = "SELECT EXTRACT(YEAR FROM dateAdded) AS year, EXTRACT(MONTH FROM dateAdded) AS month, COUNT(*) AS workflow_count " +
             "FROM WorkflowProcess GROUP BY EXTRACT(YEAR FROM dateAdded),EXTRACT(MONTH FROM dateAdded)" +
-            "ORDER BY EXTRACT(YEAR FROM dateAdded) DESC, EXTRACT(MONTH FROM dateAdded) DESC")
+            "ORDER BY EXTRACT(YEAR FROM dateAdded) DESC, EXTRACT(MONTH FROM dateAdded) ASC")
     List<Object[]> findWorkflowCountGroupedByYearAndMonth();
 
     @Query("SELECT w FROM WorkflowProcess w WHERE :search IS NULL OR w.Title LIKE %:search%")

@@ -42,6 +42,10 @@ public class RequestServiceImp implements IServiceRequest {
     private EmailServiceImpl emailService;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
+    public List<Object[]> getRequestCountByWorkflowTitle() {
+        return requestRepository.countRequestsByWorkflowTitle();
+    }
+
     public List<Object[]> getRequestCountsGroupedByDate() {
         return requestRepository.findRequestCountGroupedByDate();
     }

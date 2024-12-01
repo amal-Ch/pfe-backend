@@ -67,6 +67,11 @@ public class RequestController {
                     .body(Collections.singletonMap("error", "Error completing task: " + e.getMessage()));
         }
     }
+    @GetMapping("/request-by-workflowTitle")
+    public ResponseEntity<List<Object[]>> getRequestStatistics() {
+        List<Object[]> statistics = requestService.getRequestCountByWorkflowTitle();
+        return ResponseEntity.ok(statistics);
+    }
     private String mapDecisionToMessage(String decision) {
         switch (decision) {
             case "3":
